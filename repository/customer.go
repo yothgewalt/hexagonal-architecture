@@ -11,5 +11,5 @@ type Customer struct {
 
 type CustomerRepository interface {
 	GetAll() ([]Customer, error)
-	GetById() (*Customer, error)
+	GetById(int) (*Customer, error)
 }

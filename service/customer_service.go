@@ -1,8 +1,10 @@
 package service
 
 import (
+	"database/sql"
+	"hexagonal/errs"
+	"hexagonal/logs"
 	"hexagonal/repository"
-	"log"
 )
 
 type customerService struct {
@@ -16,8 +18,8 @@ func NewCustomerService(cRepo repository.CustomerRepository) customerService {
 func (s customerService) GetCustomers() ([]CustomerResponse, error) {
 	customers, err := s.cRepo.GetAll()
 	if err != nil {
-		log.Println(err)
-		return nil, err
+		logs.Error(err)
+		return nil, errs.NewUnexpectedError()
 	}
 
 	cResponses := []CustomerResponse{}
@@ -34,5 +36,21 @@ func (s customerService) GetCustomers() ([]CustomerResponse, error) {
 }
 
 func (s customerService) GetCustomer(id int) (*CustomerResponse, error) {
-	return nil, nil
+	customer, err := s.cRepo.GetById(id)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errs.NewNotFoundError("customer not found")
+		}
+
+		logs.Error(err)
+		return nil, errs.NewUnexpectedError()
+	}
+
+	cResponse := CustomerResponse{
+		CustomerID: customer.CustomerID,
+		Name:       customer.Name,
+		Status:     customer.Status,
+	}
+
+	return &cResponse, nil
 }

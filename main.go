@@ -19,14 +19,9 @@ import (
 func main() {
 	initTimeZone()
 	initConfig()
-
 	db := initDatabase()
 
 	customerRepositoryDB := repository.NewCustomerRepositoryDB(db)
-	_ = customerRepositoryDB
-
-	customerRepositoryMock := repository.NewCustomerRepositoryMock()
-	_ = customerRepositoryMock
 
 	accountRepositoryDB := repository.NewAccountRepositoryDB(db)
 	accountService := service.NewAcocuntService(accountRepositoryDB)
@@ -39,6 +34,7 @@ func main() {
 
 	router.HandleFunc("/customers", customerHandler.GetCustomers).Methods(http.MethodGet)
 	router.HandleFunc("/customers/{customerID:[0-9]+}", customerHandler.GetCustomer).Methods(http.MethodGet)
+
 	router.HandleFunc("/customers/{customerID:[0-9]+}/accounts", accountHandler.GetAccount).Methods(http.MethodGet)
 	router.HandleFunc("/customers/{customerID:[0-9]+}/accounts", accountHandler.NewAccount).Methods(http.MethodPost)
 

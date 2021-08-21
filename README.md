@@ -1,1 +1,3 @@
-# Hexagonal Architecture with Go
+# Hexagonal Architecture (Ports and Adapters) with Go
+
+
